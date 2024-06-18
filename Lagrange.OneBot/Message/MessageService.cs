@@ -86,14 +86,17 @@ public sealed class MessageService
             Message = raw,
             RawMessage = raw,
             TargetId = chain.TargetUin,
-        } : new OneBotPrivateMsg(uin, new OneBotSender(chain.FriendUin, chain.FriendInfo?.Nickname ?? string.Empty), "friend")
+            Time = (uint)(chain.Time - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds,
+
+    } : new OneBotPrivateMsg(uin, new OneBotSender(chain.FriendUin, chain.FriendInfo?.Nickname ?? string.Empty), "friend")
         {
             MessageId = hash,
             UserId = chain.FriendUin,
             Message = segments,
             RawMessage = raw,
-            TargetId = chain.TargetUin
-        };
+            TargetId = chain.TargetUin,
+            Time = (uint)(chain.Time - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds,
+    };
         return request;
     }
 

@@ -109,8 +109,8 @@ public class ImageEntity : IMessageEntity
                 FilePath = image.FilePath,
                 ImageSize = image.FileLen,
                 ImageUrl = $"{LegacyBaseUrl}{image.OrigUrl}",
-                Summary = image.PbRes.Summary,
-                SubType = image.PbRes.SubType
+                Summary = image.PbRes?.Summary,
+                SubType = image.PbRes?.SubType ?? 0
             };
         }
 
