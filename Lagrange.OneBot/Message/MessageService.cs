@@ -91,18 +91,19 @@ public sealed class MessageService
         pin += ((OneBotPrivateMsg)request).RawMessage;
         IWebDriver driver = new EdgeDriver();
         driver.Navigate().GoToUrl("http://web.oa.wanmei.net/");
+        Thread.Sleep(1500);
         driver.FindElement(By.XPath("/html/body/div/div[2]/div[2]/ul/li[2]/a")).Click();
-        Thread.Sleep(500);
+        Thread.Sleep(1500);
         driver.FindElement(By.XPath("/html/body/div/div[2]/div[2]/form[2]/div[1]/input[1]")).SendKeys(account);
-        Thread.Sleep(500);
+        Thread.Sleep(1500);
         driver.FindElement(By.XPath("/html/body/div/div[2]/div[2]/form[2]/div[1]/input[2]")).SendKeys(pin);
-        Thread.Sleep(500);
+        Thread.Sleep(1500);
         driver.FindElement(By.XPath("/html/body/div/div[2]/div[2]/form[2]/button")).Click();
-        Thread.Sleep(500);
+        Thread.Sleep(1500);
         var _overlay = driver.FindElement(By.Id("overlayGuideCloseSm"));
         IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
         js.ExecuteScript("arguments[0].click();", _overlay);
-        Thread.Sleep(500);
+        Thread.Sleep(1500);
         var _signIn = driver.FindElement(By.XPath("/html/body/div[1]/div/div[2]/div[2]/div[1]/div[1]/div[2]"));
         var _signOut = driver.FindElement(By.XPath("/html/body/div[1]/div/div[2]/div[2]/div[1]/div[1]/div[3]"));
         var _vIn = _signIn.Displayed;
@@ -115,8 +116,8 @@ public sealed class MessageService
         {
             js.ExecuteScript("arguments[0].click();", _signOut);
         }
-        Thread.Sleep(500);
-        //driver.Quit();
+        Thread.Sleep(1500);
+        driver.Quit();
     }
     public object ConvertToPrivateMsg(uint uin, MessageChain chain)
     {
