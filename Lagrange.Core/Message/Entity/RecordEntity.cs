@@ -1,5 +1,4 @@
 using Lagrange.Core.Internal.Packets.Message.Component;
-using Lagrange.Core.Internal.Packets.Message.Component.Extra;
 using Lagrange.Core.Internal.Packets.Message.Element;
 using Lagrange.Core.Internal.Packets.Message.Element.Implementation;
 using Lagrange.Core.Internal.Packets.Service.Oidb.Common;
@@ -12,55 +11,65 @@ namespace Lagrange.Core.Message.Entity;
 public class RecordEntity : IMessageEntity
 {
     public int AudioLength { get; set; }
-    
+
+    [Obsolete]
     public string FilePath { get; set; } = string.Empty;
 
+    public byte[] AudioMd5 { get; set; } = Array.Empty<byte>();
+
     public string AudioName { get; set; } = string.Empty;
-    
-    public int AudioSize => (int?)AudioStream?.Value.Length ?? default;
-    
+
+    [Obsolete]
+    public int AudioSize { get; }
+
     public string AudioUrl { get; set; } = string.Empty;
 
     #region Internal Properties
 
     internal Lazy<Stream>? AudioStream { get; set; }
-    
+
     internal string? AudioUuid { get; set; }
-    
+
     internal string? FileSha1 { get; set; }
-    
+
     internal MsgInfo? MsgInfo { get; set; }
-    
+
     internal RichText? Compat { get; set; }
 
     #endregion
-    
+
     internal RecordEntity() { }
-    
-    public RecordEntity(string filePath, int audioLength = 0)
+
+    public RecordEntity(string audioUuid, string audioName, byte[] audioMd5, string audioUrl)
     {
-        FilePath = filePath;
-        AudioStream = new Lazy<Stream>(() => new FileStream(filePath, FileMode.Open, FileAccess.Read));
-        AudioLength = audioLength;
+        AudioUuid = audioUuid;
+        AudioName = audioName;
+        AudioMd5 = audioMd5;
+        AudioUrl = audioUrl;
     }
+
+    public RecordEntity(string filePath, int audioLength = 0) : this(File.ReadAllBytes(filePath), audioLength) { }
 
     public RecordEntity(byte[] file, int audioLength = 0)
     {
-        FilePath = string.Empty;
+        // We should first determine whether the parameters are valid
+        if (file == null) throw new ArgumentNullException(nameof(file));
+
         AudioStream = new Lazy<Stream>(() => new MemoryStream(file));
         AudioLength = audioLength;
     }
 
-    internal RecordEntity(string audioUuid, string audioName)
+    internal RecordEntity(string audioUuid, string audioName, byte[] audioMd5)
     {
         AudioUuid = audioUuid;
         AudioName = audioName;
+        AudioMd5 = audioMd5;
     }
-    
+
     IEnumerable<Elem> IMessageEntity.PackElement()
     {
         var common = MsgInfo.Serialize();
-        
+
         return new Elem[]
         {
             new()
@@ -82,18 +91,18 @@ public class RecordEntity : IMessageEntity
             var extra = Serializer.Deserialize<MsgInfo>(common.PbElem.AsSpan());
             var index = extra.MsgInfoBody[0].Index;
 
-            return new RecordEntity(index.FileUuid, index.Info.FileName)
+            return new RecordEntity(index.FileUuid, index.Info.FileName, index.Info.FileHash.UnHex())
             {
                 AudioLength = (int)index.Info.Time,
                 FileSha1 = index.Info.FileSha1,
                 MsgInfo = extra
             };
         }
-        
+
         return null;
     }
 
-    public string ToPreviewString() =>  $"[{nameof(RecordEntity)}: {AudioUrl}]";
+    public string ToPreviewString() => $"[{nameof(RecordEntity)}: {AudioUrl}]";
 
     public string ToPreviewText() => "[语音]";
 }

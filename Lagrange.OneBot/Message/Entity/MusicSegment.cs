@@ -1,17 +1,18 @@
 ﻿using Lagrange.Core.Message.Entity;
 using Lagrange.Core.Message;
 using System.Text.Json.Serialization;
-using Lagrange.Core.Utility.Network;
 using Lagrange.OneBot.Utility;
 
 namespace Lagrange.OneBot.Message.Entity;
 
 [Serializable]
-public partial class MusicSegment(string type, string url, string audio, string title, string image, string singer)
+public partial class MusicSegment(string? type, string url, string audio, string title, string image, string content, string appid, string sign, string packageName)
 {
-    public MusicSegment() : this("","","","","","") { }
+    public MusicSegment() : this(null, "", "", "", "", "", "", "", "") { }
 
-    [JsonPropertyName("type")][CQProperty] public string Type { get; set; } = type;
+    [JsonPropertyName("type")][CQProperty] public string? Type { get; set; } = type;
+
+    [JsonPropertyName("id")][CQProperty] public string Id { get; set; } = String.Empty;
 
     [JsonPropertyName("url")][CQProperty] public string Url { get; set; } = url;
 
@@ -19,9 +20,15 @@ public partial class MusicSegment(string type, string url, string audio, string 
 
     [JsonPropertyName("title")][CQProperty] public string Title { get; set; } = title;
 
+    [JsonPropertyName("content")][CQProperty] public string Content { get; set; } = content;
+
     [JsonPropertyName("image")][CQProperty] public string Image { get; set; } = image;
 
-    [JsonPropertyName("singer")][CQProperty] public string Singer { get; set; } = singer;
+    [JsonPropertyName("appid")] public string Appid { get; set; } = appid;
+
+    [JsonPropertyName("sign")] public string Sign { get; set; } = sign;
+
+    [JsonPropertyName("package_name")] public string PackageName { get; set; } = packageName;
 }
 
 [SegmentSubscriber(typeof(ImageEntity), "music")]

@@ -1,12 +1,13 @@
 namespace Lagrange.Core.Common.Entity;
 
+[Serializable]
 public class BotUserInfo
 {
-    internal BotUserInfo(uint uin, string uid, string nickname, DateTime birthday, string city, string country, string school, uint age, DateTime registerTime, uint gender)
+    internal BotUserInfo(uint uin, string nickname, string avatar, DateTime birthday, string city, string country, string school, uint age, DateTime registerTime, GenderInfo gender, string? qid, uint level, string sign, BotStatus status, List<BusinessCustom> business)
     {
         Uin = uin;
-        Uid = uid;
-        Avatar = $"https://q1.qlogo.cn/g?b=qq&nk={Uin}&s=640";
+        Avatar = avatar;
+        // Avatar = $"https://q1.qlogo.cn/g?b=qq&nk={Uin}&s=640";
         Nickname = nickname;
         Birthday = birthday;
         City = city;
@@ -14,30 +15,43 @@ public class BotUserInfo
         School = school;
         Age = age;
         RegisterTime = registerTime;
-        Gender = (GenderInfo)gender;
+        Gender = gender;
+        Qid = qid;
+        Level = level;
+        Sign = sign;
+        Status = status;
+        Business = business;
     }
 
     public uint Uin { get; set; }
-    
-    internal string Uid { get; set; }
-    
+
     public string Avatar { get; set; }
-    
+
     public string Nickname { get; set; }
-    
+
     public DateTime Birthday { get; set; }
-    
+
     public string City { get; set; }
-    
+
     public string Country { get; set; }
-    
+
     public string School { get; set; }
-    
+
     public uint Age { get; set; }
-    
+
     public DateTime RegisterTime { get; set; }
-    
+
     public GenderInfo Gender { get; set; }
+
+    public string? Qid { get; set; }
+
+    public uint Level { get; set; }
+
+    public string Sign { get; set; }
+
+    public BotStatus Status { get; set; }
+
+    public List<BusinessCustom> Business { get; set; }
 
     public enum GenderInfo
     {
