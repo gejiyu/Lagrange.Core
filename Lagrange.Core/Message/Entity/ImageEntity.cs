@@ -6,7 +6,7 @@ using Lagrange.Core.Utility.Extension;
 using ProtoBuf;
 
 namespace Lagrange.Core.Message.Entity;
-
+ 
 [MessageElement(typeof(NotOnlineImage))]
 [MessageElement(typeof(CustomFace))]
 [MessageElement(typeof(CommonElem))]
