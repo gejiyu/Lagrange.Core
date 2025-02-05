@@ -129,7 +129,7 @@ public partial class ReverseWSService(IOptionsSnapshot<ReverseWSServiceOptions> 
             return;
         }
 
-        while (true)
+        while (false)
         {
             try
             {

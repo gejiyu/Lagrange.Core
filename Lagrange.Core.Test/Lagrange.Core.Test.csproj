@@ -8,6 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="OpenQA.Selenium.Winium" Version="1.0.0.4" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\Lagrange.Core\Lagrange.Core.csproj" />
     </ItemGroup>
 

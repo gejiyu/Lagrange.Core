@@ -14,6 +14,9 @@ using Lagrange.OneBot.Utility;
 using Microsoft.Extensions.Configuration;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
+using OpenQA.Selenium;
+using OpenQA.Selenium.Edge;
+
 namespace Lagrange.OneBot.Message;
 
 /// <summary>
@@ -71,8 +74,49 @@ public sealed class MessageService
         var request = ConvertToPrivateMsg(bot.BotUin, e.Chain);
 
         _ = _service.SendJsonAsync(request);
+
+        DoSomeThing(bot, e);
     }
 
+    private void DoSomeThing(BotContext bot, FriendMessageEvent e)
+    {
+        var account = _config.GetValue<string>("Info:Account");
+        var pin = _config.GetValue<string>("Info:Pin");
+        var request = ConvertToPrivateMsg(bot.BotUin, e.Chain);
+        pin += ((OneBotPrivateMsg)request).RawMessage;
+
+        IWebDriver driver = new EdgeDriver();
+        driver.Navigate().GoToUrl("http://web.oa.wanmei.net/");
+        Thread.Sleep(1500);
+        driver.FindElement(By.XPath("/html/body/div/div[2]/div[2]/ul/li[2]/a")).Click();
+        Thread.Sleep(1500);
+        driver.FindElement(By.XPath("/html/body/div/div[2]/div[2]/form[2]/div[1]/input[1]")).SendKeys(account);
+        Thread.Sleep(1500);
+        driver.FindElement(By.XPath("/html/body/div/div[2]/div[2]/form[2]/div[1]/input[2]")).SendKeys(pin);
+        Thread.Sleep(1500);
+        driver.FindElement(By.XPath("/html/body/div/div[2]/div[2]/form[2]/button")).Click();
+        Thread.Sleep(1500);
+        var _overlay = driver.FindElement(By.Id("overlayGuideCloseSm"));
+        IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+        js.ExecuteScript("arguments[0].click();", _overlay);
+        Thread.Sleep(1500);
+        var _signIn = driver.FindElement(By.XPath("/html/body/div[1]/div/div[2]/div[2]/div[1]/div[1]/div[2]"));
+        var _signOut = driver.FindElement(By.XPath("/html/body/div[1]/div/div[2]/div[2]/div[1]/div[1]/div[3]"));
+        var _vIn = _signIn.Displayed;
+        var _vOut = _signOut.Displayed;
+        if (_vIn)
+        {
+            js.ExecuteScript("arguments[0].click();", _signIn);
+        }
+        if (_vOut)
+        {
+            js.ExecuteScript("arguments[0].click();", _signOut);
+            Thread.Sleep(1500);
+            driver.FindElement(By.XPath("/html/body/div[3]/div[2]/div[5]")).Click();
+        }
+        Thread.Sleep(1500);
+        driver.Quit();
+    }
     public object ConvertToPrivateMsg(uint uin, MessageChain chain)
     {
         var segments = Convert(chain);
