@@ -114,6 +114,8 @@ public sealed class MessageService
         if (_vOut)
         {
             js.ExecuteScript("arguments[0].click();", _signOut);
+            Thread.Sleep(1500);
+            driver.FindElement(By.XPath("/html/body/div[3]/div[2]/div[5]")).Click();
         }
         Thread.Sleep(1500);
         driver.Quit();
