@@ -131,7 +131,7 @@ public sealed class MessageService
             RawMessage = raw,
             TargetId = chain.TargetUin,
             Time = (uint)(chain.Time - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds,
-    } : new OneBotPrivateMsg(uin, new OneBotSender(chain.FriendUin, chain.FriendInfo?.Nickname ?? string.Empty), "friend")
+    } : new OneBotPrivateMsg(uin, new OneBotSender(chain.FriendUin, chain.FriendInfo?.Nickname ?? string.Empty), "friend", (uint)(chain.Time - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds)
         {
             MessageId = hash,
             UserId = chain.FriendUin,
