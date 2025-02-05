@@ -397,8 +397,8 @@ internal class MessagingLogic : LogicBase
                 case ImageEntity image when !image.ImageUrl.Contains("&rkey=") && image.MsgInfo is not null:
                 {
                     var @event = image.IsGroup
-                        ? ImageGroupDownloadEvent.Create(image.GroupUin ?? 0, image.MsgInfo)
-                        : ImageDownloadEvent.Create(image.FriendUid ?? string.Empty, image.MsgInfo);
+                        ? ImageGroupDownloadEvent.Create(chain.GroupUin ?? 0, image.MsgInfo)
+                        : ImageDownloadEvent.Create(chain.Uid ?? string.Empty, image.MsgInfo);
 
                     var results = await Collection.Business.SendEvent(@event);
                     if (results.Count != 0)
@@ -423,6 +423,24 @@ internal class MessagingLogic : LogicBase
                 {
                     var cache = Collection.Business.CachingLogic;
                     face.SysFaceEntry ??= await cache.GetCachedFaceEntity(face.FaceId);
+                    break;
+                }
+                case BounceFaceEntity bounceFace:
+                {
+                    var cache = Collection.Business.CachingLogic;
+
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                    if (bounceFace.Name != null)
+                        break;
+
+                    string name = (await cache.GetCachedFaceEntity(bounceFace.FaceId))?.QDes ?? string.Empty;
+                    
+                    // Because the name is used as a preview text, it should not start with '/'
+                    // But the QDes of the face may start with '/', so remove it
+                    if (name.StartsWith('/'))
+                        name = name[1..];
+
+                    bounceFace.Name = name;
                     break;
                 }
                 case ForwardEntity forward when forward.TargetUin != 0:
